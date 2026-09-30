@@ -22,6 +22,7 @@ import { fileURLToPath } from "url";
 import { sanitizeWalkthroughDiagrams } from "./mermaid-sanitize.js";
 import { GENERATION_MODEL, REPAIR_MODEL } from "./models.js";
 import { formatCodexUsage, resolveAIProvider, runCodex } from "./ai-provider.js";
+import { OUTPUT_LANGUAGE_INSTRUCTION } from "./language.js";
 import { looksLikeBranchName, resolveBranchToPR } from "./resolve-branch.js";
 import { Agent as UndiciAgent } from "undici";
 
@@ -769,7 +770,9 @@ GIT HISTORY (when provided):
 - If a file was iterated on multiple times (high churn), note this as it suggests complexity or refinement.
 - Use code age data to contextualize changes: "This module, untouched for 2 years, now gains..." or "Recently active area with 3 changes this month."
 - If review comments exist AND code was changed in subsequent commits, mention that the code was revised in response to feedback.
-- Don't mechanically list commit history — weave relevant insights into the narrative naturally.`;
+- Don't mechanically list commit history — weave relevant insights into the narrative naturally.
+
+${OUTPUT_LANGUAGE_INSTRUCTION}`;
 
 function formatGitHistoryForPrompt(gitHistory) {
   if (!gitHistory) return "";
@@ -1175,7 +1178,9 @@ Output ONLY a JSON patch with the minimum changes. Do not return the full walkth
 - Mermaid: same rules as the base prompt (TD by default, quoted labels for special chars, no \`\`\`mermaid fences, ASCII arrows only).
 - Annotations describe the CHANGE, not the resulting code.
 
-If the delta is trivial (formatting, comments only) you may return an essentially empty patch (no section changes).`;
+If the delta is trivial (formatting, comments only) you may return an essentially empty patch (no section changes).
+
+${OUTPUT_LANGUAGE_INSTRUCTION}`;
 
   const userPrompt = `Update the walkthrough for this PR.
 

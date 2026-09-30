@@ -8,6 +8,7 @@ import { tmpdir } from 'os';
 import Anthropic from '@anthropic-ai/sdk';
 import { GENERATION_MODEL } from './src/models.js';
 import { resolveAIProvider, runCodex } from './src/ai-provider.js';
+import { OUTPUT_LANGUAGE_INSTRUCTION } from './src/language.js';
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const logsDir = resolve(__dirname, 'logs');
@@ -250,6 +251,8 @@ function chatMiddleware() {
               '- If the user quotes code with >, focus your answer on that specific code',
               '- Keep responses concise and actionable — this is a review context',
               '- Format with markdown: code blocks, bold, lists, tables',
+              '',
+              OUTPUT_LANGUAGE_INSTRUCTION,
             ].filter(Boolean).join('\n');
 
             // Build messages from conversation history

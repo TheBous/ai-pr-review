@@ -25,6 +25,7 @@ import { resolve, dirname, relative, join } from "path";
 import { fileURLToPath } from "url";
 import { GENERATION_MODEL } from "./models.js";
 import { formatCodexUsage, resolveAIProvider, runCodex } from "./ai-provider.js";
+import { OUTPUT_LANGUAGE_INSTRUCTION } from "./language.js";
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const AI_PROVIDER = resolveAIProvider();
@@ -251,6 +252,8 @@ Return ONLY a JSON array (no wrapping object, no markdown fences):
   }
 ]
 
+${OUTPUT_LANGUAGE_INSTRUCTION}
+
 ## Tips to Verify
 ${tips.map((t, i) => `${i + 1}. ${t.tip}`).join("\n")}
 
@@ -318,7 +321,7 @@ ${diff.slice(0, 400000)}${diff.length > 400000 ? "\n... (diff truncated — trea
 // whatever the diff-only pass established and say plainly that the deeper look
 // did not happen, rather than passing a tool failure off as a finding.
 function investigationUnavailable(tipText, priorFinding, reason) {
-  const note = `Deeper investigation was skipped — ${reason}`;
+  const note = `Analisi approfondita saltata — ${reason}`;
   return {
     tip: tipText,
     status: "info",
@@ -352,7 +355,9 @@ Search and read the relevant files. Return ONLY this JSON object, with specific 
 Status meanings:
 - verified: the concern is addressed or not an issue
 - concern: there is a real issue
-- info: it genuinely requires runtime testing or external context`;
+- info: it genuinely requires runtime testing or external context
+
+${OUTPUT_LANGUAGE_INSTRUCTION}`;
 
     try {
       let codexUsage = null;
@@ -390,7 +395,7 @@ Status meanings:
       return {
         tip: tipText,
         status: "info",
-        finding: text.slice(0, 400) || "Codex did not return a final verdict.",
+        finding: text.slice(0, 400) || "Codex non ha restituito un verdetto finale.",
         pending: false,
         resolved: true,
         usage,
@@ -427,7 +432,9 @@ Status meanings:
 - concern: you found a real issue
 - info: even with tool access, this genuinely requires runtime testing / external context
 
-Do NOT produce the final JSON until you've actually looked at the code. Don't guess.`,
+Do NOT produce the final JSON until you've actually looked at the code. Don't guess.
+
+${OUTPUT_LANGUAGE_INSTRUCTION}`,
         },
         {
           type: "text",
